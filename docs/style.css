@@ -1,0 +1,51 @@
+*, *::before, *::after {
+    box-sizing: border-box;
+    font-family: system-ui;
+}
+body { 
+    margin: 0; padding: 0;
+    background: white;
+    color: black;
+    --highlight: #3a5aa6;
+}
+
+h1 { 
+    font-size: 2rem;
+    line-height: 1.5;
+    text-align: right;
+    padding: 0.25rem;
+    margin: 0;
+}
+
+h1>a { 
+    text-decoration: none;
+    padding: 1rem;
+    background: white;
+    color: var(--highlight);
+}
+h1>a:target {
+    background: var(--highlight);
+    color: white;
+}
+
+.ui { 
+    padding: 0.5rem; 
+    margin: 0.5rem; 
+}
+
+#instructions { 
+    background: var(--highlight); 
+    color: white; 
+}
+
+#preview { 
+    border: 1px solid black; 
+}
+#text { 
+    opacity: 0; 
+    height: 1px; 
+}
+#error { 
+    background: darkred; 
+    color: white; 
+}
