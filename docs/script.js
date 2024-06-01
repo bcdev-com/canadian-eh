@@ -1,98 +1,126 @@
 import {americanize, canadianize, version} from './replacements.js';
 
-const pasteText = "Press Ctrl+V or ⌘+V to paste text to convert.";
-const copyText = "Press Ctrl+C or ⌘+C to copy converted text.";
-const readyText = "Text on clipboard ready to paste wherever you want.\r\n";
 const id = s => document.getElementById(s);
-const instructions = id('instructions');
 const messages = id('messages');
 const preview = id('preview');
-const text = id('text');
+const input = id('input');
 const error = id('error');
+const copy = id('copy');
+const paste = id('paste');
+let toAmerican = false;
 
+const delay = ms => new Promise(r => setTimeout(r, ms));
 const showError = message => {
     error.innerText = message;
     error.style.display = message ? 'block' : 'none';
 };
+const setPreview = html => preview.innerHTML = html;
+const setInstructions = (ready, paste, copy, busy) => {
+    id('ready-note').style.display = ready ? 'flex' : 'none';
+    id('paste-note').style.display = paste ? 'flex' : 'none';
+    id('copy-note').style.display = copy ? 'flex' : 'none';
+    id('busy-note').style.display = busy ? 'flex' : 'none';
+};
 
-let currentText = '';
-const setText = html => {
-    currentText = html;
-    text.innerHTML = currentText;
-    preview.innerHTML = currentText;
-}
-let toAmerican = false;
-
-function convert(line, summary) {
+function convert(text, summary) {
     const regexes = toAmerican ? americanize : canadianize;
     for(const r of regexes) {
-        for(let w of (line.match(r.re) ?? [])) {
+        for(let w of (text.match(r.re) ?? [])) {
             w = w.toLowerCase();
             summary.set(w, (summary.get(w) ?? 0) + 1);
         }
-        line = line.replace(r.re, r.s);
+        text = text.replace(r.re, r.s);
     }
-    return line;
+    return text;
 }
 
-text.focus();
-text.onblur = e => { 
-    setTimeout(() => {
-        text.focus();
-        window.getSelection().selectAllChildren(text);
-    }, 100); 
+input.focus();
+input.onblur = async e => {
+    await delay(100);
+    input.focus(); 
 };
-text.oninput = e => { 
-    text.innerHTML = currentText; 
-    window.getSelection().selectAllChildren(text);
+input.oninput = async e => {
+    const text = e.data;
+    await delay(100);
+    input.innerText = '';
+    if (text.length > 4) await processText(text);
 };
-text.onclick = e => {
-    setTimeout(() => {
-        window.getSelection().selectAllChildren(text);
-    }, 100);
-}
-text.onpaste = async e => {
-    const pastedText = e.clipboardData.getData('text/plain');
-    showError('');
-    instructions.innerText = 'Working, please wait...';
-    text.disabled = true;
+input.onpaste = async e => {
+    e.preventDefault();
+    e.stopPropagation();
+    await processText(e.clipboardData.getData('text/plain'));
+};
+paste.onclick = async e => {
+    let text = '';
     try {
+        text = await navigator.clipboard.readText();
+    } catch (e) {
+        console.error(e);
+        showError(e);
+        return;
+    }
+    await processText(text);
+};
+    
+async function processText(text) {
+    try {
+        showError('');
+        setInstructions(false, false, false, true);
+        input.disabled = true;
+        await delay(0);
         const span = document.createElement('span');
-        const lines = pastedText.split(/\r?\n+/);
         const summary = new Map();
-        setText(lines.map(line => {
-            span.textContent = convert(line, summary);
+        const newText = convert(text, summary);
+        const html = newText.split(/\r?\n+/).map(line => {
+            span.textContent = line;
             let html = span.innerHTML;
             return `<div>${html}</div>`
-        }).join('\r\n'));
-        messages.innerHTML = 'Replaced: ' + 
+        }).join('\r\n');
+        setPreview(html);
+        const replacements = 
             [...summary.keys()].toSorted().map(k =>
                 `${k}: ${summary.get(k)}x`
             ).join(', ');
-        setTimeout(() => {
-            instructions.innerText = copyText;
-            window.getSelection().selectAllChildren(text);
-        });
+        messages.innerText = replacements === '' ? 
+            'Nothing to replace.' : `Replaced: ${replacements}`;
+
+        await delay(0);
+        setInstructions(false, false, true, false);
     } catch(e) {
+        console.log(e);
         showError(e);
     } finally {
-        text.disabled = false;
+        input.disabled = false;
     }
 };
-text.oncopy = e => {
-    setTimeout(() => {
-        instructions.innerText = readyText + pasteText;
-        messages.innerHTML = '';
-        setText('&nbsp;');
-    });
+
+copy.onclick = e => {
+    try {
+        copyTextWith(text => navigator.clipboard.writeText(text));
+    } catch (e) {
+        console.error(e);
+        showError(e);
+    }
+};
+input.oncopy = e => {
+    e.preventDefault()
+    e.stopPropagation();
+    copyTextWith(text => e.clipboardData.setData('text/plain', text));
+};
+function copyTextWith(thunk) {
+    thunk(preview.textContent);
+    setInstructions(true, true, false, false);
+    messages.innerHTML = '';
+    setPreview('&nbsp;');
 }
 
 function initialize() {
     toAmerican = document.location.hash === '#american';
     if (!toAmerican) document.location.hash = '#canadian';
     showError('');
-    setText('&nbsp;');
-    instructions.innerText = pasteText;    
+    setPreview('&nbsp;');
+    setInstructions(false, true, false, false);
+    messages.innerHTML = '';   
 }
 window.addEventListener('hashchange', _ => initialize());
 initialize();
