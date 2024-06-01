@@ -12,10 +12,12 @@ body {
     --rounding: 0.25rem;
 }
 body:has(#american:target) {
+    --highlight: navy;
     --highlight: #3a5aa6;
 }
 body:has(#canadian:target) {
-    --highlight: #f7302e;
+    --highlight: darkred;
+    --highlight: #cf0921;
 }
 
 a, a:visited, a:active {
@@ -50,6 +52,7 @@ h1>a:target {
 }
 
 #instructions { 
+    font-size: 0.8rem;
     background: var(--highlight); 
     color: white; 
 }
@@ -76,9 +79,9 @@ h1>a:target {
 #footer {
     position: fixed;
     bottom: 0rem;
-    padding-bottom: 0.5rem; 
+    padding-bottom: 0.25rem; 
     width: 100dvw;   
-    font-size: 0.75rem;
+    font-size: 0.8rem;
     text-align: center;
     color: white;
     background: var(--highlight);
@@ -95,4 +98,21 @@ h1>a:target {
     opacity: 0; 
     height: 1px; width: 1px;
     overflow: hidden;
+}
+
+main {
+    padding: 2rem;
+    max-width: 50rem;
+    margin: 0 auto;
+}
+main table {
+    margin: 0 auto;
+    border-collapse: collapse;
+    thead {
+        background: black;
+        color: white;
+    }
+    & tbody tr {
+        border-bottom: 1px solid black;
+    }
 }

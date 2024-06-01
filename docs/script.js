@@ -120,7 +120,7 @@ function initialize() {
     showError('');
     setPreview('&nbsp;');
     setInstructions(false, true, false, false);
-    messages.innerHTML = '';   
+    messages.innerHTML = '';
 }
 window.addEventListener('hashchange', _ => initialize());
 initialize();

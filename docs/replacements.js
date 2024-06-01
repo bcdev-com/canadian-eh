@@ -1,4 +1,4 @@
-export const version = '2024-05-30 02:15:52Z';
+export const version = '2024-06-01 23:38:34Z';
 export const americanize = [
     {re: /\b([aA])naesthetic\b/g, s: '$1nesthetic'},
     {re: /\b([aA])naesthetics\b/g, s: '$1nesthetics'},

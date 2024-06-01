@@ -1,4 +1,93 @@
-<table id='americanize-documentation'>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>s/American/Canadian/g</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍁</text></svg>">
+    <link rel='stylesheet' href='style.css'>    
+</head>
+<body>
+    <main>
+        <a href='/'>↩ Back</a>
+        <section>
+            <h2>Usage</h2>
+            <p>
+                As webpages go, this one has an unusual interaction model. 
+                It starts with the assumption that the text you want to convert is already in some document, email, etc, and that it will be pasted back into that other place.
+            </p>
+            <p>
+                As such, there are four steps.
+                <ol>
+                    <li>Select some text elsewhere and copy it to the clipboard.</li>
+                    <li>Come to this page and paste that text in, with your system's keyboard shortcut or the button in the header.</li>
+                    <li>Copy the converted text back out to the clipboard, once again either with your system's keyboard shortcut or the button.</li>
+                    <li>Paste the result back into your original app or document.</li>
+                </ol>
+            </p>
+        </section>
+        <section>
+            <h2>Privacy</h2>
+            <p>
+                Nothing is tracked, there is no server or even any cookies. 
+                The text you are converting never leaves your browser.
+            </p>
+            <p>
+                The code is tiny and readable, so if you are a programmer, you can verify this yourself.
+            </p>
+        </section>
+        <section>
+            <h2>The Story in Three Toots</h2>
+            <p>
+                At the end of May, 2024, <a href='https://linernotes.club/@evilchili' target='_blank'>@evilchili@linernotes.club</a> posted on Mastodon:
+                <blockquote>
+                    <p>
+                        Hey Canadian nerds! I have held the domain registration for regex.ca for a very long time. 
+                        When I lived in Canada it was my primary domain, but I haven't used it for years. 
+                        Does anyone on the fediverse have a good use for it?
+                    </p>
+                    <p>
+                        I'm going to release it but if you've got a good pitch I'll pay for a 1 year renewal and then transfer it to your ownership. 
+                    </p>
+                </blockquote>
+            </p>
+            <p>
+                That prompted an idea from <a href='https://mastodon.social/@sillygwailo'>@sillygwailo@mastodon.social</a>:
+                <blockquote>
+                    Not a real pitch: A website that, using regular expressions, converts an English sentence from non-Canadian spelling to Canadian spelling.
+                </blockquote>
+            </p>
+            <p>
+                And that idea lead to an equally offhand response from <a href='https://hachyderm.io/@blakecoverett'>@blakecoverett@hachyderm.io</a>:
+                <blockquote>
+                    Amusingly, I made one of those, using primarily regexes.  
+                    It does other, domain-specific, things as well - but that was the original driving use case.  
+                    And Canadian to American as well.  
+                    Sadly, it's a company internal thing.
+                </blockquote>
+            </p>
+            A bit more back and forth, gracious permission from <a href='https://accutranglobal.com'>the company</a> the original code was written for, and three days later we have this quirky little tool.
+        </section>
+        <section>
+            <h2>Open Source</h2>
+            <p>
+                This tool is a mixture of C# that runs at build time to generate the regular expressions and vanilla Javascript that executes those regexes on on your text in the browser.
+                See the details at <a href='https://github.com/bcdev-com/canadian-eh'>https://github.com/bcdev-com/canadian-eh</a>.
+            </p>
+            <p>                
+                If you want to use the core functionality in other code, replacements.js is everything you need at runtime.
+            </p>
+            <p>
+                If you find words that it should be converting but does not, please file and issue on GitHub.  
+                Note that not all conversions can be performed both directions.  
+                For example, Canadians use license as a verb but licence as a noun, so going from Canadian to American it is always safe to chance it to license, 
+                but going the other way it can't be automated without a full understanding of English grammar and context.
+            </p>
+        </section>
+        <section>
+            <h2>The Raw Data</h2>
+            <h3>Canadian to American</h3>
+            <table id='americanize-documentation'>
   <thead>
     <tr><th>From</th><th>To</th><th>Endings</th></tr>
   </thead>
@@ -91,7 +180,8 @@
     <tr><td>vapour</td><td>vapor</td><td>-s</td></tr>
   </tbody>
 </table>
-<table id='canadianize-documentation'>
+            <h3>American to Canadian</h3>
+            <table id='canadianize-documentation'>
   <thead>
     <tr><th>From</th><th>To</th><th>Endings</th></tr>
   </thead>
@@ -176,3 +266,10 @@
     <tr><td>vapor</td><td>vapour</td><td>-s</td></tr>
   </tbody>
 </table>
+            <h3>Regexs Last Updated</h3>
+            <p>2024-06-01 23:38:34Z</p>
+        </section>
+        <a href='/'>↩ Back</a>
+    </main>
+</body>
+</html>
