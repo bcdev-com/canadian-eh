@@ -23,9 +23,13 @@ const setText = html => {
 }
 let toAmerican = false;
 
-function convert(line) {
+function convert(line, summary) {
     const regexes = toAmerican ? americanize : canadianize;
     for(const r of regexes) {
+        for(let w of (line.match(r.re) ?? [])) {
+            w = w.toLowerCase();
+            summary.set(w, (summary.get(w) ?? 0) + 1);
+        }
         line = line.replace(r.re, r.s);
     }
     return line;
@@ -55,12 +59,16 @@ text.onpaste = async e => {
     try {
         const span = document.createElement('span');
         const lines = pastedText.split(/\r?\n+/);
-        //TODO consider accumulating stats here to put in messages area
+        const summary = new Map();
         setText(lines.map(line => {
-            span.textContent = convert(line);
+            span.textContent = convert(line, summary);
             let html = span.innerHTML;
             return `<div>${html}</div>`
         }).join('\r\n'));
+        messages.innerHTML = 'Replaced: ' + 
+            [...summary.keys()].toSorted().map(k =>
+                `${k}: ${summary.get(k)}x`
+            ).join(', ');
         setTimeout(() => {
             instructions.innerText = copyText;
             window.getSelection().selectAllChildren(text);
